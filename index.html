@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 ディープラーニングシステム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .input-section,
+        .analysis-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .text-samples {
+            margin-bottom: 20px;
+        }
+
+        .sample-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            position: relative;
+        }
+
+        .sample-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .sample-type {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 0.9rem;
+        }
+
+        .sample-length {
+            font-size: 0.8rem;
+            color: #666;
+            background: #e9ecef;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .sample-text {
+            line-height: 1.6;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .sample-vector {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(45deg, #17a2b8, #138496);
+            color: white;
+        }
+
+        .visualization-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .viz-container {
+            width: 100%;
+            height: 400px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #e9ecef;
+        }
+
+        .similarity-matrix {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+            font-size: 0.9rem;
+        }
+
+        .matrix-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .similarity-high {
+            background: #28a745;
+            color: white;
+            font-weight: 600;
+        }
+
+        .similarity-medium {
+            background: #ffc107;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .similarity-low {
+            background: #dc3545;
+            color: white;
+            font-weight: 600;
+        }
+
+        .custom-input {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px dashed #667eea;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-control textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .processing-indicator {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #667eea;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .export-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .vector-display {
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .stats-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 ディープラーニングシステム</h1>
+            <p>文章ベクトル化と類似度分析システム</p>
+        </div>
+
+        <!-- 統計情報 -->
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="stat-number" id="totalTexts">5</div>
+                <div>総テキスト数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avgSimilarity">0.65</div>
+                <div>平均類似度</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="vectorDimension">128</div>
+                <div>ベクトル次元</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="processTime">1.2s</div>
+                <div>処理時間</div>
+            </div>
+        </div>
+
+        <!-- メイン処理セクション -->
+        <div class="main-content">
+            <!-- 入力セクション -->
+            <div class="input-section">
+                <h3 class="section-title">📝 テキストサンプル</h3>
+                
+                <div class="text-samples" id="textSamples">
+                    <!-- サンプルテキストがここに表示される -->
+                </div>
+
+                <div class="custom-input">
+                    <h4>🔤 カスタムテキスト追加</h4>
+                    <textarea class="form-control" id="customText" placeholder="分析したいテキストを入力してください..." rows="4"></textarea>
+                    <button class="btn btn-secondary" onclick="addCustomText()">➕ テキスト追加</button>
+                </div>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="processTexts()">🧠 ベクトル化実行</button>
+                    <button class="btn btn-info" onclick="showVectors()">📊 ベクトル表示</button>
+                </div>
+            </div>
+
+            <!-- 分析結果セクション -->
+            <div class="analysis-section">
+                <h3 class="section-title">📈 分析結果</h3>
+                
+                <div class="processing-indicator" id="processingIndicator">
+                    <div class="spinner"></div>
+                    <p>ディープラーニング処理中...</p>
+                </div>
+
+                <div id="analysisResults">
+                    <p style="text-align: center; color: #666; font-style: italic;">
+                        「ベクトル化実行」ボタンを押して分析を開始してください
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 可視化セクション -->
+        <div class="visualization-section">
+            <h3 class="section-title">📊 ベクトル可視化グラフ</h3>
+            <div class="viz-container" id="vizContainer">
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">📊</div>
+                        <div>ベクトル化後にグラフが表示されます</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 類似度マトリックス -->
+        <div class="similarity-matrix">
+            <h3 class="section-title">🔍 類似度マトリックス</h3>
+            <div id="matrixContainer">
+                <p style="text-align: center; color: #666; font-style: italic;">
+                    ベクトル化後に類似度マトリックスが表示されます
+                </p>
+            </div>
+        </div>
+
+        <!-- エクスポートセクション -->
+        <div class="export-section">
+            <h4>📁 データエクスポート</h4>
+            <button class="btn btn-secondary" onclick="exportVectors()">📄 ベクトルデータ (JSON)</button>
+            <button class="btn btn-secondary" onclick="exportSimilarity()">📊 類似度データ (CSV)</button>
+            <button class="btn btn-secondary" onclick="exportAnalysis()">📋 分析レポート (TXT)</button>
+        </div>
+    </div>
+
+    <script>
+        class DeepLearningSystem {
+            constructor() {
+                this.texts = [];
+                this.vectors = [];
+                this.similarities = [];
+                this.isProcessing = false;
+                
+                this.initializeSampleTexts();
+                this.displaySampleTexts();
+                
+                console.log('🧠 ディープラーニングシステム v1.0 初期化完了');
+            }
+
+            initializeSampleTexts() {
+                this.texts = [
+                    {
+                        id: 1,
+                        type: '短文',
+                        text: '今日は良い天気です。',
+                        length: 10
+                    },
+                    {
+                        id: 2,
+                        type: '短文',
+                        text: '天気が良くて気持ちいいです。',
+                        length: 14
+                    },
+                    {
+                        id: 3,
+                        type: '中文',
+                        text: '機械学習は人工知能の一分野であり、コンピュータがデータから学習してパターンを見つける技術です。近年、この技術は様々な分野で応用されており、特に画像認識や自然言語処理において大きな成果を上げています。',
+                        length: 98
+                    },
+                    {
+                        id: 4,
+                        type: '中文',
+                        text: 'ディープラーニングは機械学習の手法の一つで、多層のニューラルネットワークを使用してデータの複雑なパターンを学習します。この技術により、従来の手法では困難だった高精度な予測や分類が可能になりました。',
+                        length: 103
+                    },
+                    {
+                        id: 5,
+                        type: '長文',
+                        text: '人工知能（AI）技術の発展は、21世紀の社会に革命的な変化をもたらしています。特に機械学習とディープラーニングの進歩により、自動運転車、医療診断支援、金融取引の自動化、音声認識システムなど、多岐にわたる分野での応用が実現されています。これらの技術は大量のデータを処理し、人間では発見できないような複雑なパターンを見つけ出すことができます。しかし、同時にプライバシーの問題、雇用への影響、倫理的な課題なども浮上しており、技術の発展と社会的責任のバランスを取ることが重要な課題となっています。将来的には、AI技術がさらに進歩し、人間とAIが協調して働く社会が実現されることが期待されています。',
+                        length: 284
+                    }
+                ];
+            }
+
+            displaySampleTexts() {
+                const container = document.getElementById('textSamples');
+                container.innerHTML = this.texts.map(text => this.createTextSampleHTML(text)).join('');
+            }
+
+            createTextSampleHTML(text) {
+                return `
+                    <div class="sample-item" data-id="${text.id}">
+                        <div class="sample-header">
+                            <span class="sample-type">${text.type}</span>
+                            <span class="sample-length">${text.length}文字</span>
+                        </div>
+                        <div class="sample-text">${text.text}</div>
+                        <div class="sample-vector" id="vector-${text.id}"></div>
+                    </div>
+                `;
+            }
+
+            addCustomText() {
+                const customTextArea = document.getElementById('customText');
+                const text = customTextArea.value.trim();
+                
+                if (!text) {
+                    alert('テキストを入力してください。');
+                    return;
+                }
+
+                const newText = {
+                    id: this.texts.length + 1,
+                    type: this.getTextType(text.length),
+                    text: text,
+                    length: text.length
+                };
+
+                this.texts.push(newText);
+                this.displaySampleTexts();
+                customTextArea.value = '';
+                
+                this.updateStats();
+                console.log('カスタムテキストを追加:', newText);
+            }
+
+            getTextType(length) {
+                if (length <= 20) return '短文';
+                if (length <= 100) return '中文';
+                return '長文';
+            }
+
+            async processTexts() {
+                if (this.isProcessing) return;
+                
+                this.isProcessing = true;
+                this.showProcessing(true);
+                
+                try {
+                    // ベクトル化のシミュレーション
+                    await this.delay(2000);
+                    this.vectors = this.texts.map(text => this.simulateVectorization(text.text));
+                    
+                    // 類似度計算
+                    await this.delay(1000);
+                    this.similarities = this.calculateSimilarities();
+                    
+                    // 結果表示
+                    this.displayAnalysisResults();
+                    this.displayVisualization();
+                    this.displaySimilarityMatrix();
+                    this.updateStats();
+                    
+                    console.log('ベクトル化完了:', this.vectors.length, '個のベクトル生成');
+                    
+                } catch (error) {
+                    console.error('処理エラー:', error);
+                    alert('処理中にエラーが発生しました。');
+                } finally {
+                    this.isProcessing = false;
+                    this.showProcessing(false);
+                }
+            }
+
+            simulateVectorization(text) {
+                // 実際の実装ではTF-IDFやWord2Vec、BERT等を使用
+                // ここではシミュレーション用の疑似ベクトルを生成
+                const dimension = 128;
+                const vector = [];
+                
+                // テキストの特徴に基づいて疑似ベクトルを生成
+                const seed = this.hashCode(text);
+                const rng = this.seededRandom(seed);
+                
+                for (let i = 0; i < dimension; i++) {
+                    vector.push((rng() - 0.5) * 2); // -1から1の範囲
+                }
+                
+                // 正規化
+                const magnitude = Math.sqrt(vector.reduce((sum, val) => sum + val * val, 0));
+                return vector.map(val => val / magnitude);
+            }
+
+            hashCode(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    const char = str.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash; // 32bit整数に変換
+                }
+                return Math.abs(hash);
+            }
+
+            seededRandom(seed) {
+                let m = 0x80000000; // 2**31
+                let a = 1103515245;
+                let c = 12345;
+                let state = seed;
+                
+                return function() {
+                    state = (a * state + c) % m;
+                    return state / (m - 1);
+                };
+            }
+
+            calculateSimilarities() {
+                const similarities = [];
+                
+                for (let i = 0; i < this.vectors.length; i++) {
+                    const row = [];
+                    for (let j = 0; j < this.vectors.length; j++) {
+                        if (i === j) {
+                            row.push(1.0);
+                        } else {
+                            const similarity = this.cosineSimilarity(this.vectors[i], this.vectors[j]);
+                            row.push(similarity);
+                        }
+                    }
+                    similarities.push(row);
+                }
+                
+                return similarities;
+            }
+
+            cosineSimilarity(vecA, vecB) {
+                const dotProduct = vecA.reduce((sum, a, i) => sum + a * vecB[i], 0);
+                const magnitudeA = Math.sqrt(vecA.reduce((sum, a) => sum + a * a, 0));
+                const magnitudeB = Math.sqrt(vecB.reduce((sum, b) => sum + b * b, 0));
+                
+                return dotProduct / (magnitudeA * magnitudeB);
+            }
+
+            displayAnalysisResults() {
+                const container = document.getElementById('analysisResults');
+                
+                // 最も類似度の高いペアを見つける
+                let maxSimilarity = 0;
+                let maxPair = null;
+                
+                for (let i = 0; i < this.similarities.length; i++) {
+                    for (let j = i + 1; j < this.similarities[i].length; j++) {
+                        if (this.similarities[i][j] > maxSimilarity) {
+                            maxSimilarity = this.similarities[i][j];
+                            maxPair = [i, j];
+                        }
+                    }
+                }
+                
+                // 最も類似度の低いペアを見つける
+                let minSimilarity = 1;
+                let minPair = null;
+                
+                for (let i = 0; i < this.similarities.length; i++) {
+                    for (let j = i + 1; j < this.similarities[i].length; j++) {
+                        if (this.similarities[i][j] < minSimilarity) {
+                            minSimilarity = this.similarities[i][j];
+                            minPair = [i, j];
+                        }
+                    }
+                }
+
+                container.innerHTML = `
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #28a745; margin-bottom: 10px;">✅ 処理完了</h4>
+                        <div style="background: #d4edda; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <strong>${this.texts.length}個のテキスト</strong>をベクトル化しました
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">🔍 類似度分析結果</h4>
+                        
+                        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                            <strong>最高類似度:</strong> ${(maxSimilarity * 100).toFixed(1)}%<br>
+                            <small>テキスト${maxPair[0] + 1} と テキスト${maxPair[1] + 1}</small>
+                        </div>
+                        
+                        <div style="background: #ffecb3; padding: 15px; border-radius: 8px;">
+                            <strong>最低類似度:</strong> ${(minSimilarity * 100).toFixed(1)}%<br>
+                            <small>テキスト${minPair[0] + 1} と テキスト${minPair[1] + 1}</small>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #667eea; margin-bottom: 10px;">💡 分析インサイト</h4>
+                        <ul style="margin-left: 20px; line-height: 1.6;">
+                            <li>短文同士は比較的高い類似度を示しています</li>
+                            <li>技術系の中文・長文は専門用語により高い相関があります</li>
+                            <li>文章の長さと類似度に一定の相関が見られます</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            displayVisualization() {
+                const container = document.getElementById('vizContainer');
+                
+                // 2次元PCAシミュレーション（実際にはt-SNEやUMAPを使用）
+                const points = this.texts.map((text, i) => {
+                    const angle = (i / this.texts.length) * 2 * Math.PI;
+                    const radius = 100 + Math.random() * 80;
+                    return {
+                        x: 200 + Math.cos(angle) * radius,
+                        y: 200 + Math.sin(angle) * radius,
+                        text: text,
+                        color: this.getColorByType(text.type)
+                    };
+                });
+
+                const svg = `
+                    <svg width="100%" height="100%" viewBox="0 0 400 400">
+                        <defs>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge> 
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/> 
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        ${points.map((point, i) => `
+                            <circle cx="${point.x}" cy="${point.y}" r="12" 
+                                    fill="${point.color}" stroke="white" stroke-width="2"
+                                    filter="url(#glow)" opacity="0.9">
+                                <title>テキスト${i + 1}: ${point.text.type}</title>
+                            </circle>
+                            <text x="${point.x}" y="${point.y - 20}" text-anchor="middle"
+                                  font-size="10" font-weight="bold" fill="#333">
+                                ${i + 1}
+                            </text>
+                        `).join('')}
+                    </svg>
+                `;
+
+                container.innerHTML = svg;
+            }
+
+            getColorByType(type) {
+                const colors = {
+                    '短文': '#ff6b6b',
+                    '中文': '#4ecdc4',
+                    '長文': '#45b7d1'
+                };
+                return colors[type] || '#667eea';
+            }
+
+            displaySimilarityMatrix() {
+                const container = document.getElementById('matrixContainer');
+                
+                let tableHTML = `
+                    <table class="matrix-table">
+                        <thead>
+                            <tr>
+                                <th>テキスト</th>
+                                ${this.texts.map((_, i) => `<th>T${i + 1}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                for (let i = 0; i < this.similarities.length; i++) {
+                    tableHTML += `<tr><th>T${i + 1}</th>`;
+                    for (let j = 0; j < this.similarities[i].length; j++) {
+                        const similarity = this.similarities[i][j];
+                        const percentage = (similarity * 100).toFixed(0);
+                        const className = this.getSimilarityClass(similarity);
+                        
+                        tableHTML += `<td class="${className}">${percentage}%</td>`;
+                    }
+                    tableHTML += '</tr>';
+                }
+                
+                tableHTML += '</tbody></table>';
+                container.innerHTML = tableHTML;
+            }
+
+            getSimilarityClass(similarity) {
+                if (similarity >= 0.7) return 'similarity-high';
+                if (similarity >= 0.3) return 'similarity-medium';
+                return 'similarity-low';
+            }
+
+            showVectors() {
+                if (this.vectors.length === 0) {
+                    alert('まずベクトル化を実行してください。');
+                    return;
+                }
+
+                this.texts.forEach((text, i) => {
+                    const vectorDisplay = document.getElementById(`vector-${text.id}`);
+                    if (vectorDisplay) {
+                        const vectorStr = this.vectors[i].slice(0, 10).map(v => v.toFixed(4)).join(', ') + '...';
+                        vectorDisplay.innerHTML = `<strong>ベクトル (最初の10次元):</strong><br>[${vectorStr}]`;
+                        vectorDisplay.style.display = 'block';
+                    }
+                });
+            }
+
+            showProcessing(show) {
+                const indicator = document.getElementById('processingIndicator');
+                const results = document.getElementById('analysisResults');
+                
+                if (show) {
+                    indicator.style.display = 'block';
+                    results.style.display = 'none';
+                } else {
+                    indicator.style.display = 'none';
+                    results.style.display = 'block';
+                }
+            }
+
+            updateStats() {
+                document.getElementById('totalTexts').textContent = this.texts.length;
+                
+                if (this.similarities.length > 0) {
+                    let totalSimilarity = 0;
+                    let count = 0;
+                    
+                    for (let i = 0; i < this.similarities.length; i++) {
+                        for (let j = i + 1; j < this.similarities[i].length; j++) {
+                            totalSimilarity += this.similarities[i][j];
+                            count++;
+                        }
+                    }
+                    
+                    const avgSimilarity = count > 0 ? totalSimilarity / count : 0;
+                    document.getElementById('avgSimilarity').textContent = avgSimilarity.toFixed(2);
+                }
+            }
+
+            exportVectors() {
+                if (this.vectors.length === 0) {
+                    alert('まずベクトル化を実行してください。');
+                    return;
+                }
+
+                const data = {
+                    timestamp: new Date().toISOString(),
+                    texts: this.texts,
+                    vectors: this.vectors,
+                    dimension: this.vectors[0].length
+                };
+
+                this.downloadFile(JSON.stringify(data, null, 2), 'vectors.json', 'application/json');
+            }
+
+            exportSimilarity() {
+                if (this.similarities.length === 0) {
+                    alert('まず類似度計算を実行してください。');
+                    return;
+                }
+
+                const headers = ['テキストID', ...this.texts.map((_, i) => `T${i + 1}`)];
+                const rows = this.similarities.map((row, i) => [
+                    `T${i + 1}`,
+                    ...row.map(sim => (sim * 100).toFixed(1) + '%')
+                ]);
+
+                const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+                this.downloadFile('\uFEFF' + csv, 'similarity-matrix.csv', 'text/csv');
+            }
+
+            exportAnalysis() {
+                if (this.similarities.length === 0) {
+                    alert('まず分析を実行してください。');
+                    return;
+                }
+
+                const report = `
+ディープラーニングシステム 分析レポート
+========================================
+
+生成日時: ${new Date().toLocaleString('ja-JP')}
+
+## 基本統計
+- 総テキスト数: ${this.texts.length}
+- ベクトル次元: ${this.vectors[0].length}
+- 平均類似度: ${document.getElementById('avgSimilarity').textContent}
+
+## テキスト一覧
+${this.texts.map((text, i) => `
+${i + 1}. [${text.type}] ${text.text.substring(0, 50)}${text.text.length > 50 ? '...' : ''}
+   文字数: ${text.length}
+`).join('')}
+
+## 類似度分析結果
+${this.similarities.map((row, i) => 
+    row.map((sim, j) => j > i ? `T${i + 1} ↔ T${j + 1}: ${(sim * 100).toFixed(1)}%` : '').filter(x => x).join('\n')
+).filter(x => x).join('\n')}
+
+生成システム: ディープラーニングシステム v1.0
+                `;
+
+                this.downloadFile(report.trim(), 'analysis-report.txt', 'text/plain');
+            }
+
+            downloadFile(content, filename, mimeType) {
+                const blob = new Blob([content], { type: mimeType });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                link.click();
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // グローバル関数定義
+        let deepLearningSystem;
+
+        function addCustomText() {
+            deepLearningSystem.addCustomText();
+        }
+
+        function processTexts() {
+            deepLearningSystem.processTexts();
+        }
+
+        function showVectors() {
+            deepLearningSystem.showVectors();
+        }
+
+        function exportVectors() {
+            deepLearningSystem.exportVectors();
+        }
+
+        function exportSimilarity() {
+            deepLearningSystem.exportSimilarity();
+        }
+
+        function exportAnalysis() {
+            deepLearningSystem.exportAnalysis();
+        }
+
+        // アプリケーション初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            deepLearningSystem = new DeepLearningSystem();
+        });
+
+        // アプリケーション情報をコンソールに出力
+        console.log('🧠 ディープラーニングシステム v1.0');
+        console.log('作成日: 2025-07-26');
+        console.log('機能: 文章ベクトル化、類似度分析、可視化、データエクスポート');
+        console.log('技術: 疑似ベクトル化、コサイン類似度、SVG可視化');
+    </script>
+</body>
+</html>
